@@ -1,6 +1,7 @@
 package pers.nefedov.socks.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pers.nefedov.socks.dto.SocksDto;
 import pers.nefedov.socks.dto.SocksUpdateDto;
 
@@ -14,4 +15,6 @@ public interface SocksService {
     List<SocksDto> get();
 
     SocksDto update(long id, SocksUpdateDto socksUpdateDto);
+
+    List<SocksDto> addBatch(MultipartFile file);
 }

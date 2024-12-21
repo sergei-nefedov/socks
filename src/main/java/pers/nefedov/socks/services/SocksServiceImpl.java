@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pers.nefedov.socks.dto.SocksDto;
 import pers.nefedov.socks.dto.SocksUpdateDto;
 import pers.nefedov.socks.exceptions.NoDataForUpdateException;
@@ -12,18 +13,22 @@ import pers.nefedov.socks.exceptions.ShortageInStockException;
 import pers.nefedov.socks.mappers.SocksMapper;
 import pers.nefedov.socks.models.Socks;
 import pers.nefedov.socks.repositories.SocksRepository;
+import pers.nefedov.socks.utils.FileUploader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class SocksServiceImpl implements SocksService {
     private final SocksMapper socksMapper;
+    private final FileUploader fileUploader;
     private final SocksRepository socksRepository;
     final Logger logger = LoggerFactory.getLogger(SocksServiceImpl.class);
 
-    public SocksServiceImpl(SocksMapper socksMapper, SocksRepository socksRepository) {
+    public SocksServiceImpl(SocksMapper socksMapper, FileUploader fileUploader, SocksRepository socksRepository) {
         this.socksMapper = socksMapper;
+        this.fileUploader = fileUploader;
         this.socksRepository = socksRepository;
     }
 
@@ -94,6 +99,17 @@ public class SocksServiceImpl implements SocksService {
                 socksAlreadyInStock.getCottonPercentage(), storedSocks.getCottonPercentage(),
                 socksAlreadyInStock.getQuantity(), storedSocks.getQuantity());
         return socksMapper.socksToSocksDto(storedSocks);
+    }
+
+    @Override
+    @Transactional
+    public List<SocksDto> addBatch(MultipartFile file) {
+        List<SocksDto> incomingSocksDtoList = fileUploader.excelUpload(file);
+        List<SocksDto> storedSocksDtoList = new ArrayList<>();
+        for (SocksDto incomingSockDto : incomingSocksDtoList) {
+            storedSocksDtoList.add(this.add(incomingSockDto));
+        }
+        return storedSocksDtoList;
     }
 
 

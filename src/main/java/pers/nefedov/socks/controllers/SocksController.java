@@ -49,7 +49,9 @@ public class SocksController implements SwaggerSocksController {
     }
 
     @Override
-    public ResponseEntity<String> addBatch(MultipartFile file) {
-        return null;
+    public ResponseEntity<List<SocksDto>> addBatch(MultipartFile file) {
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(socksService.addBatch(file));
     }
 }

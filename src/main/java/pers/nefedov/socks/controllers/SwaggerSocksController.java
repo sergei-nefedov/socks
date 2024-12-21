@@ -64,5 +64,5 @@ public interface SwaggerSocksController {
             summary = "Прием нескольких партий носков",
             description = "Принимает Excel файл с партиями носков, содержащими цвет, процентное содержание хлопка и количество."
     )
-    ResponseEntity<String> addBatch(@RequestParam("file") MultipartFile file);
+    ResponseEntity<List<SocksDto>> addBatch(@RequestParam("file") MultipartFile file);
 }
