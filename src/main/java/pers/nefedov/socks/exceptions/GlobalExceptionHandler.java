@@ -51,6 +51,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(FileUploadErrorException.class)
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    private ResponseEntity<ErrorResponse> handleException(FileUploadErrorException exception) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setId(UUID.randomUUID().toString());
+        errorResponse.setMessage(exception.getMessage());
+        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), errorResponse.getId(),
+                errorResponse.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
 
     @ResponseBody
     @JsonInclude(JsonInclude.Include.NON_NULL)
