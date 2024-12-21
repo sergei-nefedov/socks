@@ -5,12 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.nefedov.socks.dto.SocksDto;
+import pers.nefedov.socks.dto.SocksUpdateDto;
+import pers.nefedov.socks.exceptions.NoDataForUpdateException;
+import pers.nefedov.socks.exceptions.NoSuchSocksInStockException;
 import pers.nefedov.socks.exceptions.ShortageInStockException;
 import pers.nefedov.socks.mappers.SocksMapper;
 import pers.nefedov.socks.models.Socks;
 import pers.nefedov.socks.repositories.SocksRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SocksServiceImpl implements SocksService {
@@ -67,6 +71,29 @@ public class SocksServiceImpl implements SocksService {
     public List<SocksDto> get() {
         return socksMapper.socksToSocksDto(socksRepository.findAll());//TODO должно возвращаться количество, фильтры
         // сделать
+    }
+
+    @Override
+    @Transactional
+    public SocksDto update(long id, SocksUpdateDto socksUpdateDto) {
+        String newColor = socksUpdateDto.getColor();
+        Double newCottonPercentage = socksUpdateDto.getCottonPercentage();
+        Integer newQuantity = socksUpdateDto.getQuantity();
+        if (newColor == null && newCottonPercentage == null && newQuantity == null)
+            throw new NoDataForUpdateException("Request doesn't contain any useful data");
+        Optional<Socks> optionalSocks = socksRepository.findById(id);
+        Socks socksAlreadyInStock = optionalSocks.orElseThrow(
+                () -> new NoSuchSocksInStockException("Socks with ID" + id + " not found"));
+        if (newColor != null) socksAlreadyInStock.setColor(newColor);
+        if (newCottonPercentage != null) socksAlreadyInStock.setCottonPercentage(newCottonPercentage);
+        if (newQuantity != null) socksAlreadyInStock.setQuantity(newQuantity);
+        Socks storedSocks = socksRepository.save(socksAlreadyInStock);
+        logger.info("Параметры носков с id={} были изменены: цвет - с {} на {}, содержание хлопка - с {} на {}, " +
+                        "количество - с {} на {}.",
+                storedSocks.getId(), socksUpdateDto.getColor(), storedSocks.getColor(),
+                socksUpdateDto.getCottonPercentage(), storedSocks.getCottonPercentage(),
+                socksUpdateDto.getQuantity(), storedSocks.getQuantity());
+        return socksMapper.socksToSocksDto(storedSocks);
     }
 
 

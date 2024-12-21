@@ -29,6 +29,29 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INSUFFICIENT_STORAGE);
     }
 
+    @ExceptionHandler(NoDataForUpdateException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    private ResponseEntity<ErrorResponse> handleException(NoDataForUpdateException exception) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setId(UUID.randomUUID().toString());
+        errorResponse.setMessage(exception.getMessage());
+        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.UNPROCESSABLE_ENTITY.value(), errorResponse.getId(),
+                errorResponse.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(NoSuchSocksInStockException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private ResponseEntity<ErrorResponse> handleException(NoSuchSocksInStockException exception) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setId(UUID.randomUUID().toString());
+        errorResponse.setMessage(exception.getMessage());
+        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.NOT_FOUND.value(), errorResponse.getId(),
+                errorResponse.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+
     @ResponseBody
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Getter

@@ -7,7 +7,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pers.nefedov.socks.dto.SocksDto;
+import pers.nefedov.socks.dto.SocksUpdateDto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RequestMapping("/api/socks")
@@ -22,7 +25,7 @@ public interface SwaggerSocksController {
                     "такого же цвета и с таким же содержанием хлопка, новое поступление будет " +
                     "присоединено к имеющемуся количеству."
     )
-    ResponseEntity<SocksDto> add(@Validated @RequestBody SocksDto taskDTO);
+    ResponseEntity<SocksDto> add(@Validated @RequestBody SocksDto socksDto);
 
     @PostMapping("/outcome")
     @ResponseStatus(HttpStatus.OK)
@@ -31,7 +34,7 @@ public interface SwaggerSocksController {
             description = "Параметры: цвет носков, процентное содержание хлопка, количество.\n" +
                     "Уменьшает количество носков на складе, если их хватает."
     )
-    ResponseEntity<SocksDto> subtract(@Validated @RequestBody SocksDto taskDTO);
+    ResponseEntity<SocksDto> subtract(@Validated @RequestBody SocksDto socksDto);
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -50,9 +53,10 @@ public interface SwaggerSocksController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Обновление данных носков",
-            description = "Позволяет изменить параметры носков (цвет, процент хлопка, количество)."
+            description = "Позволяет изменить параметры носков (цвет, процент хлопка, количество) по заданному id."
     )
-    ResponseEntity<SocksDto> change(@Validated @RequestBody SocksDto taskDTO);
+    ResponseEntity<SocksDto> update(@PathVariable @Valid @Positive long id,
+                                    @Validated @RequestBody SocksUpdateDto socksUpdateDto);
 
     @PostMapping("/batch")
     @ResponseStatus(HttpStatus.OK)
