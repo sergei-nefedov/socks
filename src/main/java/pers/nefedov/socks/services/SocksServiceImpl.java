@@ -7,12 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pers.nefedov.socks.dto.SocksDto;
 import pers.nefedov.socks.dto.SocksUpdateDto;
+import pers.nefedov.socks.exceptions.InvalidRequestParametersException;
 import pers.nefedov.socks.exceptions.NoDataForUpdateException;
 import pers.nefedov.socks.exceptions.NoSuchSocksInStockException;
 import pers.nefedov.socks.exceptions.ShortageInStockException;
 import pers.nefedov.socks.mappers.SocksMapper;
 import pers.nefedov.socks.models.Socks;
 import pers.nefedov.socks.repositories.SocksRepository;
+import pers.nefedov.socks.utils.Comparisons;
 import pers.nefedov.socks.utils.FileUploader;
 
 import java.util.ArrayList;
@@ -78,9 +80,16 @@ public class SocksServiceImpl implements SocksService {
     }
 
     @Override
-    public List<SocksDto> get() {
-        return socksMapper.socksToSocksDto(socksRepository.findAll());//TODO должно возвращаться количество, фильтры
-        // сделать
+
+    public Integer get(String color, Double cottonPercentage, String comparison) {
+        validateParameters(cottonPercentage, comparison);
+        return socksRepository.sumQuantityWithFilters(color, cottonPercentage, comparison).orElse(0);
+    }
+
+    private static void validateParameters(Double cottonPercentage, String comparison) {
+        if (cottonPercentage != null && (cottonPercentage < 0 || cottonPercentage > 100) || !Comparisons.contains(comparison) && comparison != null)
+            throw new InvalidRequestParametersException(
+                    "Percentage or comparison values incorrect");
     }
 
     @Override

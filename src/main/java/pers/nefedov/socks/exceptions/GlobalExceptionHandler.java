@@ -61,6 +61,16 @@ public class GlobalExceptionHandler {
                 errorResponse.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
+    @ExceptionHandler(InvalidRequestParametersException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    private ResponseEntity<ErrorResponse> handleException(InvalidRequestParametersException exception) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setId(UUID.randomUUID().toString());
+        errorResponse.setMessage(exception.getMessage());
+        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.BAD_REQUEST.value(), errorResponse.getId(),
+                errorResponse.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
 
     @ResponseBody

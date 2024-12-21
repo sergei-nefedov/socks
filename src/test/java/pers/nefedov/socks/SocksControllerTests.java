@@ -55,23 +55,6 @@ public class SocksControllerTests {
 //        socksRepository.deleteAll();
     }
 
-//    @Test
-//    void shouldGetAllCustomers() {
-//        List<Socks> socksList = List.of(
-//                new Socks(null, "Черный", 87.7, 1000),
-//                new Socks(null, "Серый", 50.0, 150)
-//        );
-//        socksRepository.saveAll(socksList);
-//
-//        given()
-//                .contentType(ContentType.JSON)
-//                .when()
-//                .get("/api/socks")
-//                .then()
-//                .statusCode(200)
-//                .body(".", hasSize(2));
-//    }
-
     @Test
     @Order(10)
     void testUploadExcelFile() {
@@ -270,6 +253,7 @@ public class SocksControllerTests {
                 .body("cottonPercentage", equalTo(90.0F))
                 .body("quantity", equalTo(55));
     }
+
     @Test
     @Order(80)
     void testUpdateSocksThatNotInStock() {
@@ -293,9 +277,10 @@ public class SocksControllerTests {
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.
-                NOT_FOUND.value())
+                        NOT_FOUND.value())
                 .contentType(ContentType.JSON);
     }
+
     @Test
     @Order(90)
     void testUpdateColorOnlyForSocksThatInStock() {
@@ -319,5 +304,74 @@ public class SocksControllerTests {
                 .body("color", equalTo("Синий"))
                 .body("cottonPercentage", equalTo(90.0F))
                 .body("quantity", equalTo(55));
+    }
+
+    @Test
+    @Order(100)
+    void testGetQuantityOfALLSocksThatInStock() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/socks")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.
+                        OK.value())
+                .body(equalTo("855"));
+    }
+
+    @Test
+    @Order(110)
+    void testGetQuantityOfBlueSocksThatInStock() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/socks?color=Синий")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.
+                        OK.value())
+                .body(equalTo("55"));
+    }
+
+    @Test
+    @Order(120)
+    void testGetQuantityOfSocksWithCottonPercentageEqual90ThatInStock() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/socks?cottonPercentage=90&comparison=equal")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.
+                        OK.value())
+                .body(equalTo("55"));
+    }
+
+    @Test
+    @Order(130)
+    void testGetQuantityOfBlueSocksWithCottonPercentageLessThan90ThatInStock() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/socks?color=Синий&cottonPercentage=90&comparison=lessThan")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.
+                        OK.value())
+                .body(equalTo("0"));
+    }
+
+    @Test
+    @Order(140)
+    void testGetQuantityOfBlueSocksWithInvalidCottonPercentage() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/socks?color=Синий&cottonPercentage=150&comparison=lessThan")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.
+                        BAD_REQUEST.value());
     }
 }

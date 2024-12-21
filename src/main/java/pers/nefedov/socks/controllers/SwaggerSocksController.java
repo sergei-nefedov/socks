@@ -47,7 +47,10 @@ public interface SwaggerSocksController {
                     Процент содержания хлопка.
                     Возвращает количество носков, соответствующих критериям."""
     )
-    ResponseEntity<List<SocksDto>> get();
+
+    int get(@RequestParam(required = false) String color,
+            @RequestParam(required = false) Double cottonPercentage,
+            @RequestParam(required = false) String comparison);
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)

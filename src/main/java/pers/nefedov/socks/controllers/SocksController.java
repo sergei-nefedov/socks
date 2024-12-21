@@ -35,10 +35,8 @@ public class SocksController implements SwaggerSocksController {
     }
 
     @Override
-    public ResponseEntity<List<SocksDto>> get() {
-        return ResponseEntity
-                .status(HttpStatus.OK.value())
-                .body(socksService.get());
+    public int get(String color, Double cottonPercentage, String comparison) {
+        return socksService.get(color, cottonPercentage, comparison);
     }
 
     @Override

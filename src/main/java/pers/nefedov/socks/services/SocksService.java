@@ -1,6 +1,5 @@
 package pers.nefedov.socks.services;
 
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pers.nefedov.socks.dto.SocksDto;
 import pers.nefedov.socks.dto.SocksUpdateDto;
@@ -12,7 +11,7 @@ public interface SocksService {
 
     SocksDto subtract(SocksDto socksDto);
 
-    List<SocksDto> get();
+    Integer get(String color, Double cottonPercentage, String comparison);
 
     SocksDto update(long id, SocksUpdateDto socksUpdateDto);
 
