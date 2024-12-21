@@ -16,6 +16,7 @@ import pers.nefedov.socks.models.Socks;
 import pers.nefedov.socks.repositories.SocksRepository;
 
 import java.util.List;
+import java.io.File;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasSize;
@@ -69,5 +70,19 @@ public class SocksControllerTests {
                 .then()
                 .statusCode(200)
                 .body(".", hasSize(2));
+    }
+    @Test
+    void testUploadExcelFile() {
+
+        File excelFile = new File("src/test/resources/test.xlsx");
+
+        given()
+                .contentType(ContentType.MULTIPART)
+                .multiPart("file", excelFile)
+                .when()
+                .post("/api/socks/batch")
+                .then()
+                .statusCode(200)
+                .body(".", hasSize(3));
     }
 }
