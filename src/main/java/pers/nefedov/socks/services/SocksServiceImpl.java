@@ -59,7 +59,12 @@ public class SocksServiceImpl implements SocksService {
     @Override
     @Transactional
     public SocksDto subtract(SocksDto socksDto) {
-        Socks socksAlreadyInStock = socksRepository.getSocksByColorAndCottonPercentage(socksDto.getColor(), socksDto.getCottonPercentage());
+        Optional<Socks> optionalSocks = socksRepository.findByColorAndCottonPercentage(socksDto.getColor(),
+                socksDto.getCottonPercentage());
+
+        Socks socksAlreadyInStock = optionalSocks.orElseThrow(
+                () -> new NoSuchSocksInStockException("Socks with color " + socksDto.getColor() + " and cotton " +
+                        "percentage " + socksDto.getCottonPercentage() + " not found"));
         int quantityAfterSubtraction = socksAlreadyInStock.getQuantity() - socksDto.getQuantity();
         if (quantityAfterSubtraction < 0) throw new ShortageInStockException("Remaining socks in stock are less than " +
                 "requested by " + quantityAfterSubtraction);
@@ -89,15 +94,18 @@ public class SocksServiceImpl implements SocksService {
         Optional<Socks> optionalSocks = socksRepository.findById(id);
         Socks socksAlreadyInStock = optionalSocks.orElseThrow(
                 () -> new NoSuchSocksInStockException("Socks with ID" + id + " not found"));
+        String oldColor = socksAlreadyInStock.getColor();
+        Double oldCottonPercentage = socksAlreadyInStock.getCottonPercentage();
+        Integer oldQuantity = socksAlreadyInStock.getQuantity();
         if (newColor != null) socksAlreadyInStock.setColor(newColor);
         if (newCottonPercentage != null) socksAlreadyInStock.setCottonPercentage(newCottonPercentage);
         if (newQuantity != null) socksAlreadyInStock.setQuantity(newQuantity);
         Socks storedSocks = socksRepository.save(socksAlreadyInStock);
         logger.info("Параметры носков с id={} были изменены: цвет - с {} на {}, содержание хлопка - с {} на {}, " +
                         "количество - с {} на {}.",
-                storedSocks.getId(), socksAlreadyInStock.getColor(), storedSocks.getColor(),
-                socksAlreadyInStock.getCottonPercentage(), storedSocks.getCottonPercentage(),
-                socksAlreadyInStock.getQuantity(), storedSocks.getQuantity());
+                storedSocks.getId(), oldColor, storedSocks.getColor(),
+                oldCottonPercentage, storedSocks.getCottonPercentage(),
+                oldQuantity, storedSocks.getQuantity());
         return socksMapper.socksToSocksDto(storedSocks);
     }
 
