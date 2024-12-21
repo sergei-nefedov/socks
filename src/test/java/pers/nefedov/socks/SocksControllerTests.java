@@ -12,9 +12,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import pers.nefedov.socks.repositories.SocksRepository;
 
-
-import java.util.List;
 import java.io.File;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;

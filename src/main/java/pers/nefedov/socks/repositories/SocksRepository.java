@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pers.nefedov.socks.models.Socks;
 
-import javax.validation.constraints.Min;
-import java.util.List;
 import java.util.Optional;
 
 public interface SocksRepository extends JpaRepository<Socks, Long> {

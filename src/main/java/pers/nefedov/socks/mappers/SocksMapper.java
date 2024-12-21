@@ -1,8 +1,6 @@
 package pers.nefedov.socks.mappers;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.springframework.stereotype.Service;
 import pers.nefedov.socks.dto.SocksDto;
 import pers.nefedov.socks.models.Socks;
 
