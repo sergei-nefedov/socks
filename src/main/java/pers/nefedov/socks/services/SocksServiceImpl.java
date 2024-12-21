@@ -90,9 +90,9 @@ public class SocksServiceImpl implements SocksService {
         Socks storedSocks = socksRepository.save(socksAlreadyInStock);
         logger.info("Параметры носков с id={} были изменены: цвет - с {} на {}, содержание хлопка - с {} на {}, " +
                         "количество - с {} на {}.",
-                storedSocks.getId(), socksUpdateDto.getColor(), storedSocks.getColor(),
-                socksUpdateDto.getCottonPercentage(), storedSocks.getCottonPercentage(),
-                socksUpdateDto.getQuantity(), storedSocks.getQuantity());
+                storedSocks.getId(), socksAlreadyInStock.getColor(), storedSocks.getColor(),
+                socksAlreadyInStock.getCottonPercentage(), storedSocks.getCottonPercentage(),
+                socksAlreadyInStock.getQuantity(), storedSocks.getQuantity());
         return socksMapper.socksToSocksDto(storedSocks);
     }
 
