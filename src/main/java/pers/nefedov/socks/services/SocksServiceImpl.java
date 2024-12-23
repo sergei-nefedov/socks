@@ -17,9 +17,9 @@ import pers.nefedov.socks.repositories.SocksRepository;
 import pers.nefedov.socks.utils.Comparisons;
 import pers.nefedov.socks.utils.FileUploader;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SocksServiceImpl implements SocksService {
@@ -61,12 +61,7 @@ public class SocksServiceImpl implements SocksService {
     @Override
     @Transactional
     public SocksDto subtract(SocksDto socksDto) {
-        Optional<Socks> optionalSocks = socksRepository.findByColorAndCottonPercentage(socksDto.getColor(),
-                socksDto.getCottonPercentage());
-
-        Socks socksAlreadyInStock = optionalSocks.orElseThrow(
-                () -> new NoSuchSocksInStockException("Socks with color " + socksDto.getColor() + " and cotton " +
-                        "percentage " + socksDto.getCottonPercentage() + " not found"));
+        Socks socksAlreadyInStock = getSocksAlreadyInStockByColorAndCottonPercentage(socksDto);
         int quantityAfterSubtraction = socksAlreadyInStock.getQuantity() - socksDto.getQuantity();
         if (quantityAfterSubtraction < 0) throw new ShortageInStockException("Remaining socks in stock are less than " +
                 "requested by " + quantityAfterSubtraction);
@@ -77,6 +72,14 @@ public class SocksServiceImpl implements SocksService {
                 storedSocks.getId(), storedSocks.getColor(), storedSocks.getCottonPercentage(),
                 socksDto.getQuantity(), storedSocks.getQuantity());
         return socksMapper.socksToSocksDto(storedSocks);
+    }
+
+    private Socks getSocksAlreadyInStockByColorAndCottonPercentage(SocksDto socksDto) {
+        Optional<Socks> optionalSocks = socksRepository.findByColorAndCottonPercentage(socksDto.getColor(),
+                socksDto.getCottonPercentage());
+        return optionalSocks.orElseThrow(
+                () -> new NoSuchSocksInStockException("Socks with color " + socksDto.getColor() + " and cotton " +
+                        "percentage " + socksDto.getCottonPercentage() + " not found"));
     }
 
     @Override
@@ -100,9 +103,7 @@ public class SocksServiceImpl implements SocksService {
         Integer newQuantity = socksUpdateDto.getQuantity();
         if (newColor == null && newCottonPercentage == null && newQuantity == null)
             throw new NoDataForUpdateException("Request doesn't contain any useful data");
-        Optional<Socks> optionalSocks = socksRepository.findById(id);
-        Socks socksAlreadyInStock = optionalSocks.orElseThrow(
-                () -> new NoSuchSocksInStockException("Socks with ID" + id + " not found"));
+        Socks socksAlreadyInStock = getSocksAlreadyInStockById(id);
         String oldColor = socksAlreadyInStock.getColor();
         Double oldCottonPercentage = socksAlreadyInStock.getCottonPercentage();
         Integer oldQuantity = socksAlreadyInStock.getQuantity();
@@ -118,15 +119,19 @@ public class SocksServiceImpl implements SocksService {
         return socksMapper.socksToSocksDto(storedSocks);
     }
 
+    private Socks getSocksAlreadyInStockById(long id) {
+        Optional<Socks> optionalSocks = socksRepository.findById(id);
+        return optionalSocks.orElseThrow(
+                () -> new NoSuchSocksInStockException("Socks with ID" + id + " not found"));
+    }
+
     @Override
     @Transactional
     public List<SocksDto> addBatch(MultipartFile file) {
         List<SocksDto> incomingSocksDtoList = fileUploader.excelUpload(file);
-        List<SocksDto> storedSocksDtoList = new ArrayList<>();
-        for (SocksDto incomingSockDto : incomingSocksDtoList) {
-            storedSocksDtoList.add(this.add(incomingSockDto));
-        }
-        return storedSocksDtoList;
+        return incomingSocksDtoList.stream()
+                .map(this::add)
+                .collect(Collectors.toList());
     }
 
 
