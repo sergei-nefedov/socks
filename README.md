@@ -6,7 +6,7 @@
 Версия JDK : 17<br>
 Система сборки: Gradle<br>
 Формат файла для загрузки партий: Excel (.xlsx)<br>
-Тестирование: Rest Assured, JUnit, Testcontainers<br>
+Тестирование: Rest Assured, JUnit, Testcontainers, SLF4J<br>
 Прочее: Mapstruct, Lombok<br>
  <br> Запуск осуществляется через pers/nefedov/socks/SocksApplication.java. <br>
 Для работы приложения необходимо запустить PostgreSQL в контейнере Docker с помощью compose.yaml
