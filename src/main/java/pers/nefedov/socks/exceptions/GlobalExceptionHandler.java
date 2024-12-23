@@ -24,8 +24,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setId(UUID.randomUUID().toString());
         errorResponse.setMessage(exception.getMessage());
-        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.INSUFFICIENT_STORAGE.value(), errorResponse.getId(),
-                errorResponse.getMessage());
+        log(HttpStatus.INSUFFICIENT_STORAGE, errorResponse);
         return new ResponseEntity<>(errorResponse, HttpStatus.INSUFFICIENT_STORAGE);
     }
 
@@ -35,8 +34,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setId(UUID.randomUUID().toString());
         errorResponse.setMessage(exception.getMessage());
-        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.UNPROCESSABLE_ENTITY.value(), errorResponse.getId(),
-                errorResponse.getMessage());
+        log(HttpStatus.UNPROCESSABLE_ENTITY, errorResponse);
         return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
@@ -46,8 +44,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setId(UUID.randomUUID().toString());
         errorResponse.setMessage(exception.getMessage());
-        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.NOT_FOUND.value(), errorResponse.getId(),
-                errorResponse.getMessage());
+        log(HttpStatus.NOT_FOUND, errorResponse);
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
@@ -57,21 +54,24 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setId(UUID.randomUUID().toString());
         errorResponse.setMessage(exception.getMessage());
-        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), errorResponse.getId(),
-                errorResponse.getMessage());
+        log(HttpStatus.UNSUPPORTED_MEDIA_TYPE, errorResponse);
         return new ResponseEntity<>(errorResponse, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
+
     @ExceptionHandler(InvalidRequestParametersException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private ResponseEntity<ErrorResponse> handleException(InvalidRequestParametersException exception) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setId(UUID.randomUUID().toString());
         errorResponse.setMessage(exception.getMessage());
-        logger.error("CODE {} ID={} MESSAGE: {}", HttpStatus.BAD_REQUEST.value(), errorResponse.getId(),
-                errorResponse.getMessage());
+        log(HttpStatus.BAD_REQUEST, errorResponse);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    private static void log(HttpStatus insufficientStorage, ErrorResponse errorResponse) {
+        logger.error("CODE {} ID={} MESSAGE: {}", insufficientStorage.value(), errorResponse.getId(),
+                errorResponse.getMessage());
+    }
 
     @ResponseBody
     @JsonInclude(JsonInclude.Include.NON_NULL)

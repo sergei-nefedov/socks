@@ -21,8 +21,6 @@ public class SocksUpdateDto {
     private Long id;
     @Nullable
     @Schema(description = "Цвет носков", example = "Черный")
-//    @NotEmpty(message = "Цвет обязателен")
-//    @NotBlank
     @Size(min = 3, max = 20)
     @Pattern(regexp = "^[\\p{L}\\p{N}\\p{Z}\\p{P}]*$", message = "Название цвета должно состоять только из отображаемых символов")
     private String color;
