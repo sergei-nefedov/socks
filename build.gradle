@@ -1,57 +1,57 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.18'
-	id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+    id 'org.springframework.boot' version '2.7.18'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 ext {
-	testcontainersVersion = "1.18.3"
+    testcontainersVersion = "1.18.3"
 }
 
 group = 'pers.nefedov'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.3.0'
-	implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.7'
-	implementation 'org.mapstruct:mapstruct:1.6.3'
-	testImplementation 'org.testcontainers:junit-jupiter'
-	compileOnly 'org.projectlombok:lombok'
-	implementation "org.springdoc:springdoc-openapi-ui:1.8.0"
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.3.0'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.7'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    compileOnly 'org.projectlombok:lombok'
+    implementation "org.springdoc:springdoc-openapi-ui:1.8.0"
     runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.testcontainers:postgresql'
-	testImplementation 'io.rest-assured:rest-assured'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'io.rest-assured:rest-assured'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.testcontainers:testcontainers-bom:$testcontainersVersion"
-	}
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:$testcontainersVersion"
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
